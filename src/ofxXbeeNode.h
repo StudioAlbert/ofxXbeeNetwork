@@ -46,7 +46,7 @@ public:
     void setup(string _id);
     
     // Array of outputs
-private:
+protected:
     map<int, ofxXbeeNodePin> m_aPins;
 public:
     void registerPin(int _pinNum, pinMode _pinMode);

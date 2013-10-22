@@ -17,7 +17,6 @@ public:
     void updateAnims();
     
     void draw();
-    void drawXbeeNodes();
     
     void keyPressed  (int key);
     void keyReleased(int key);
@@ -30,6 +29,8 @@ public:
     void gotMessage(ofMessage msg);
     
     ofTrueTypeFont		font;
+    
+    ofxPanel    m_pnlConnection2222;
     
     ofxPanel    m_pnlConnection;
     ofParameter<string> m_pxConnection;

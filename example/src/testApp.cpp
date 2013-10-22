@@ -190,45 +190,31 @@ void testApp::updateGui(){
 void testApp::draw(){
     
     // FOR REAL ----------------------------------
-    drawXbeeNodes();
-    
     m_pnlAnimations.draw();
     m_pnlGeneric.draw();
     
-}
-
-//--------------------------------------------------------------
-void testApp::drawXbeeNodes(){
+    // Xbee State
+    string xBeeFullState = m_oXbees.getSerialFullState();
     
-    map<string, ofxXbeeNode>::iterator oneXbee;
-    map<string, ofxXbeeNode>           xbees = m_oXbees.getNodes();
+    ofPushMatrix();
+    ofPushStyle();
+    ofTranslate(ofGetWidth() - 400, 20);
     
-    int size = 150;
-    int idxXbee = 0;
-    
-    for (oneXbee = xbees.begin(); oneXbee != xbees.end(); oneXbee++) {
-        
-        int idxRow = idxXbee%4;
-        int idxCol = (int)idxXbee/4;
-        
-        ofPushMatrix();
-        ofTranslate(ofPoint(idxRow*size,idxCol*size));
-        
-        ofPushStyle();
-        
-        ofSetColor(150);
-        ofRect(0,0, size, size);
-        
-        ofSetColor(ofColor::white);
-        ofDrawBitmapString("ID="+(*oneXbee).second.getID(), 10, 20);
-        
-        ofPopStyle();
-        ofPopMatrix();
-        
-        idxXbee++;
+    if(m_oXbees.getSerialStatus() == STATUS_Connected){
+        ofSetColor(ofColor::green);
+    }else if (m_oXbees.getSerialStatus() == ""){
+        ofSetColor(ofColor::orange);
+    }else if (m_oXbees.getSerialStatus() == STATUS_NotConnected){
+        ofSetColor(ofColor::red);
+    }else{
+        ofSetColor(ofColor::black);
     }
     
-
+    ofDrawBitmapString(xBeeFullState, 0, 0);
+    
+    ofPopStyle();
+    ofPopMatrix();
+    
 }
 
 //--------------------------------------------------------------

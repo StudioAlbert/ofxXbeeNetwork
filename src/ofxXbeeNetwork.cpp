@@ -16,7 +16,7 @@ void ofxXbeeNetwork::setup(string _connectionString){
 // -----------------------------------------
 void ofxXbeeNetwork::serialSetup(string _connectionString){
         
-    connectString = _connectionString;
+    m_sSerialString = _connectionString;
     
     m_oSerial.listDevices();
     vector <ofSerialDeviceInfo> deviceList = m_oSerial.getDeviceList();
@@ -102,9 +102,16 @@ void ofxXbeeNetwork::serialSend(string _msgToSend){
         }
         // Log Message
         ofLogVerbose() << "Sending : " << _msgToSend;
+        // Logging
+        m_aSerialMessages.push_back(ofGetTimestampString() + " : " +_msgToSend);
+        m_aSerialMessages.resize(10);
+        // Status
+        m_sSerialStatus = STATUS_Connected;
         
     }else{
         ofLogError() << "Serial not ready : Message not send : " << _msgToSend;
+        // Status
+        m_sSerialStatus = STATUS_NotConnected;
     }
 
 }
@@ -136,6 +143,31 @@ void ofxXbeeNetwork::serialRead(){
     memcpy(bytesReadString, bytesReturned, 3);
     readTime = ofGetElapsedTimef();
 
+}
+
+// -------------------------------------------------
+string ofxXbeeNetwork::getSerialStatus(){
+    return m_sSerialStatus;
+}
+
+// -------------------------------------------------
+string ofxXbeeNetwork::getSerialFullState(){
+    
+    string fullState;
+    
+    fullState.append("Connection string : " + m_sSerialString + "\n");
+    fullState.append("Connection status : " + m_sSerialStatus + "\n");
+    fullState.append("\n");
+    fullState.append("Messages :\n");
+    
+    for (vector<string>::iterator oneMessage = m_aSerialMessages.begin(); oneMessage != m_aSerialMessages.end(); oneMessage++) {
+        
+        fullState.append((*oneMessage) + "\n");
+        
+    }
+    
+    return fullState;
+    
 }
 
 // -------------------------------------------------

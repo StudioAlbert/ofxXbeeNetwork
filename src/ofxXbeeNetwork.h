@@ -16,15 +16,17 @@
 class ofxXbeeNetwork {
     
     // Array of all nodes of your network
-private:
+protected:
     map<string, ofxXbeeNode> m_aNodes;
 public:
     map<string, ofxXbeeNode> getNodes(){return m_aNodes;};
     // No setter
     
 private:
-    ofSerial	m_oSerial;
-    string      connectString;
+    ofSerial            m_oSerial;
+    string              m_sSerialString;
+    string              m_sSerialStatus;
+    vector<string>      m_aSerialMessages;
 
     // All stufff required to read
     char		bytesRead[3];				// data from serial, we will be trying to read 3
@@ -32,6 +34,10 @@ private:
     int			nBytesRead;					// how much did we read?
     int			nTimesRead;					// how many times did we read?
     float		readTime;					// when did we last read?
+
+public:
+    string getSerialStatus();
+    string getSerialFullState();
     
 public:
     void setup(string _connectionString);
