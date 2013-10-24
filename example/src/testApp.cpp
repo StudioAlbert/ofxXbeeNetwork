@@ -6,11 +6,11 @@ void testApp::setup(){
 	
 	ofBackground(255);
 	ofSetLogLevel(OF_LOG_VERBOSE);
-	
-	font.loadFont("DIN.otf", 64);
     
     setupAnims();
     setupGui();
+ 	
+    font.loadFont("DIN.otf", 64);
     
     //serial.setup("COM4", baud); // windows example
     //serial.setup("/dev/tty.usbserial-A4001JEC", baud); // mac osx example
@@ -35,7 +35,7 @@ void testApp::setupAnims(){
             
             m_aAnims[animKey] = ofxAnimatableFloat();
             m_aAnims[animKey].setRepeatType(PLAY_ONCE);
-            m_aAnims[animKey].setCurve(EASE_OUT);
+            m_aAnims[animKey].setCurve(EASE_IN);
             
             m_oXbees.addNode(nodeKey);
             m_oXbees.registerNodePin(nodeKey, 2, out);
@@ -219,11 +219,31 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
-    /*
-    msgToSend.push_back(ofToString(key));
-    
-    bSendSerialMessage = true;
-	*/
+    switch (key) {
+        case 'x':
+            m_aAnims["1:2:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims["1:2:Drop"].animateFromTo(0, 1);
+            break;
+        case 'c':
+            m_aAnims["1:3:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims["1:3:Drop"].animateFromTo(0, 1);
+            break;
+        case 'v':
+            m_aAnims["1:4:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims["1:4:Drop"].animateFromTo(0, 1);
+            break;
+        case 'b':
+            m_aAnims["1:5:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims["1:5:Drop"].animateFromTo(0, 1);
+            break;
+        case 'n':
+            m_aAnims["1:6:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims["1:6:Drop"].animateFromTo(0, 1);
+            break;
+            
+        default:
+            break;
+    }
 }
 
 //--------------------------------------------------------------

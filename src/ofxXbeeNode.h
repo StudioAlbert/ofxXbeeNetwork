@@ -25,16 +25,17 @@ class ofxXbeeNode {
     
 private:
     // Parameter ID for the Xbee card ----------------
-private:
+protected:
     string      m_sID;
 public:
     string      getID(){return m_sID;};
     
     // Array of messages to send ----------------
-private:
+protected:
     queue<string>      m_aMessages;
     void               pushMessage(string _message);
 public:
+    queue<string>      getMessages(){return m_aMessages;};
     string             popNextMessage();
     
     // Drive a node is only about adding and adding message --
@@ -49,6 +50,12 @@ public:
 protected:
     map<int, ofxXbeeNodePin> m_aPins;
 public:
+    map<int, ofxXbeeNodePin> getPins(){return m_aPins;};
     void registerPin(int _pinNum, pinMode _pinMode);
+    
+    
+    // Draw it :/
+public:
+    void draw(ofPoint _pos, float _size);
     
 };

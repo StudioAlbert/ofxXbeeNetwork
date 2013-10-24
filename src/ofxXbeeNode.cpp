@@ -67,3 +67,11 @@ void ofxXbeeNode::setDropPosition(int _pin, float _position){
     
     
 }
+
+// -------------------------------------------------
+void ofxXbeeNode::draw(ofPoint _pos, float _size){
+    ofPushStyle();
+    ofSetColor(ofColor::seaShell);
+    ofRect(_pos, _size, _size);
+    ofPopStyle();
+}

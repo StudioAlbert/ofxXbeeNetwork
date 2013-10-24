@@ -43,6 +43,7 @@ void ofxXbeeNetwork::addNode(string _IDNode){
 }
 
 
+
 // -----------------------------------------------
 void ofxXbeeNetwork::registerNodePin(string _IDNode, int _pinNum, pinMode _pinMode){
     m_aNodes[_IDNode].registerPin(_pinNum, _pinMode);
@@ -103,8 +104,8 @@ void ofxXbeeNetwork::serialSend(string _msgToSend){
         // Log Message
         ofLogVerbose() << "Sending : " << _msgToSend;
         // Logging
-        m_aSerialMessages.push_back(ofGetTimestampString() + " : " +_msgToSend);
-        m_aSerialMessages.resize(10);
+        m_aSerialMessages.push(ofGetTimestampString() + " : " +_msgToSend);
+        //m_aSerialMessages.resize(10);
         // Status
         m_sSerialStatus = STATUS_Connected;
         
@@ -160,12 +161,17 @@ string ofxXbeeNetwork::getSerialFullState(){
     fullState.append("\n");
     fullState.append("Messages :\n");
     
-    for (vector<string>::iterator oneMessage = m_aSerialMessages.begin(); oneMessage != m_aSerialMessages.end(); oneMessage++) {
+    while (!m_aSerialMessages.empty()) {
+        fullState.append(m_aSerialMessages.top() + "\n");
+        m_aSerialMessages.pop();
+    }
+    /*
+    for (stack<string>::iterator oneMessage = m_aSerialMessages.begin(); oneMessage != m_aSerialMessages.end(); oneMessage++) {
         
         fullState.append((*oneMessage) + "\n");
         
     }
-    
+    */
     return fullState;
     
 }
@@ -194,4 +200,53 @@ void ofxXbeeNetwork::setNodeDropPosition(string _IDNode, int _pin, float _positi
         (*nodeFound).second.setDropPosition(_pin, _position);
     }
     
+}
+
+// -------------------------------------------------
+void ofxXbeeNetwork::draw(){
+    drawNodes();
+    drawControl();
+}
+
+// -------------------------------------------------
+void ofxXbeeNetwork::drawControl(){
+
+    // Xbee State
+    string xBeeFullState = getSerialFullState();
+    
+    ofPushMatrix();
+    ofPushStyle();
+    ofTranslate(20, 20);
+    
+    if(getSerialStatus() == STATUS_Connected){
+        ofSetColor(ofColor::green);
+    }else if (getSerialStatus() == ""){
+        ofSetColor(ofColor::orange);
+    }else if (getSerialStatus() == STATUS_NotConnected){
+        ofSetColor(ofColor::red);
+    }else{
+        ofSetColor(ofColor::black);
+    }
+    
+    ofDrawBitmapString(xBeeFullState, 0, 0);
+    
+    ofPopStyle();
+    ofPopMatrix();
+    
+    
+    
+}
+
+// ------------------------------------------
+void ofxXbeeNetwork::drawNodes(){
+    
+    map<string, ofxXbeeNode>::iterator oneNode;
+    int idxNode = 0;
+    int sizeOfANode = 50;
+    
+    // Draw the nodes -----------------
+    for (oneNode=m_aNodes.begin(); oneNode!=m_aNodes.end(); oneNode++) {
+        // ---------
+        (*oneNode).second.draw(ofPoint((sizeOfANode+10)*++idxNode, 10), sizeOfANode);
+    }
 }

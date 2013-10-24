@@ -26,7 +26,7 @@ private:
     ofSerial            m_oSerial;
     string              m_sSerialString;
     string              m_sSerialStatus;
-    vector<string>      m_aSerialMessages;
+    stack<string>      m_aSerialMessages;
 
     // All stufff required to read
     char		bytesRead[3];				// data from serial, we will be trying to read 3
@@ -54,4 +54,10 @@ private:
     void serialSetup(string _connectionString);
     void serialSend(string _msgToSend);
     void serialRead();
+    
+    // Draw :/
+public:
+    void draw();
+    void drawNodes();
+    void drawControl();
 };
