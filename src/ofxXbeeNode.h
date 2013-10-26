@@ -22,6 +22,10 @@
 #include "ofxXbeeNodePin.h"
 
 class ofxXbeeNode {
+
+public:
+    ofxXbeeNode();
+    ofxXbeeNode(const ofxXbeeNode &_xbeeNode);
     
 private:
     // Parameter ID for the Xbee card ----------------
@@ -53,9 +57,16 @@ public:
     map<int, ofxXbeeNodePin> getPins(){return m_aPins;};
     void registerPin(int _pinNum, pinMode _pinMode);
     
+    // HeartBeat -- We wanna know if this node is already on
+protected:
+    bool    m_bHeartBeat;
+public:
+    bool    getHeartBeat(){return m_bHeartBeat;}
+    void    switchHeartBeat(){m_bHeartBeat = !m_bHeartBeat;}
     
     // Draw it :/
 public:
-    void draw(ofPoint _pos, float _size);
+    void draw(ofPoint _pos, float _xSize, float _ySize);
+    
     
 };

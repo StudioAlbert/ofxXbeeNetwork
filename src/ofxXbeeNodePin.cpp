@@ -8,6 +8,15 @@
 
 #include "ofxXbeeNodePin.h"
 
+ofxXbeeNodePin::ofxXbeeNodePin(){
+    
+}
+
+ofxXbeeNodePin::ofxXbeeNodePin(ofxXbeeNodePin const &_pin){
+    m_aValues = _pin.m_aValues;
+    m_eMode   = _pin.m_eMode;
+}
+
 bool operator== (ofxXbeeNodePin &_pin1, ofxXbeeNodePin &_pin2){
     
     if(_pin1.m_eMode!=_pin2.m_eMode){
@@ -50,4 +59,14 @@ void ofxXbeeNodePin::registerPin(pinMode _mode, vector<float>   _values){
 
 void ofxXbeeNodePin::registerPin(pinMode _mode){
     m_eMode = _mode;
+}
+
+float ofxXbeeNodePin::getAValue(int _orderValue){
+    
+    if(_orderValue>=0 && _orderValue<m_aValues.size()){
+        return m_aValues[_orderValue];
+    }else{
+        return 0;
+    }
+    
 }

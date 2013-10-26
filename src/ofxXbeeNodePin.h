@@ -11,22 +11,32 @@
 #include "ofMain.h"
 
 enum pinMode{
-    out     = 1
-    ,in     = 2
-    ,pwm    = 3
+    pinModeIn       = 1
+    ,pinModePwm     = 2
+    ,pinModeDrop    = 3
 };
 
 class ofxXbeeNodePin {
+public:
+    ofxXbeeNodePin();
+    ofxXbeeNodePin(ofxXbeeNodePin const &_pin);
+private:
+    friend bool operator== (ofxXbeeNodePin &_pin1, ofxXbeeNodePin &_pin2);
     
 private:
     pinMode         m_eMode;
-    vector<float>   m_aValues;
+public:
+    pinMode         getMode(){return m_eMode;};
     
-    friend bool operator== (ofxXbeeNodePin &_pin1, ofxXbeeNodePin &_pin2);
+private:
+    vector<float>   m_aValues;
+public:
+    float   getAValue(int _orderValue);
     
 public:
     bool changePin(pinMode _newMode, vector<float>   m_aValues);
     void registerPin(pinMode _newMode, vector<float>   m_aValues);
     void registerPin(pinMode _newMode);
+    
     
 };

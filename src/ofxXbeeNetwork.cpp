@@ -73,7 +73,7 @@ void ofxXbeeNetwork::update(){
                 ofLogNotice() << "Message Num = " << ofToString(nbMessage) << " Content:" << message;
                 serialSend(message);
             }else{
-                ofLogVerbose() << "All messages consumed";
+                //ofLogVerbose() << "All messages consumed";
                 break;
             }
             
@@ -83,13 +83,13 @@ void ofxXbeeNetwork::update(){
         } while (nbMessage<=MAX_MSGS_SENT);
         
         
-        ofLogVerbose() << "End of sending : nb Messages sent = " << nbMessage;
+        //ofLogVerbose() << "End of sending : nb Messages sent = " << nbMessage;
         
     }
     
     // After Sending, we listen
     serialRead();
-
+    
 }
 
 // -----------------------------------------------------------
@@ -143,6 +143,18 @@ void ofxXbeeNetwork::serialRead(){
 
     memcpy(bytesReadString, bytesReturned, 3);
     readTime = ofGetElapsedTimef();
+    
+    // in case of heartbeat
+    map<string, ofxXbeeNode>::iterator oneNode;
+    
+    // Switch the HeartBeat -----------------
+    for (oneNode=m_aNodes.begin(); oneNode!=m_aNodes.end(); oneNode++) {
+        // ---------
+        if((ofGetSeconds() % 2) == 0){
+            (*oneNode).second.switchHeartBeat();
+        }
+    }
+
 
 }
 
@@ -185,6 +197,8 @@ void ofxXbeeNetwork::setNodeAllStrip(string _IDNode, int _pin, float _value){
     if(nodeFound != m_aNodes.end()){
         // ID is found into the existing nodes
         (*nodeFound).second.setAllStrip(_pin, _value);
+    }else{
+        ofLogError() << "This ID for your node is not available." << _IDNode;
     }
 
 }
@@ -203,9 +217,9 @@ void ofxXbeeNetwork::setNodeDropPosition(string _IDNode, int _pin, float _positi
 }
 
 // -------------------------------------------------
-void ofxXbeeNetwork::draw(){
-    drawNodes();
-    drawControl();
+void ofxXbeeNetwork::draw(bool _drawNodes, bool _drawControl){
+    if(_drawNodes)      drawNodes();
+    if(_drawControl)    drawControl();
 }
 
 // -------------------------------------------------
@@ -247,6 +261,6 @@ void ofxXbeeNetwork::drawNodes(){
     // Draw the nodes -----------------
     for (oneNode=m_aNodes.begin(); oneNode!=m_aNodes.end(); oneNode++) {
         // ---------
-        (*oneNode).second.draw(ofPoint((sizeOfANode+10)*++idxNode, 10), sizeOfANode);
+        (*oneNode).second.draw(ofPoint((sizeOfANode+10)*++idxNode, 10), sizeOfANode, sizeOfANode);
     }
 }

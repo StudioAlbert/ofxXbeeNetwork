@@ -57,7 +57,7 @@ private:
     
     // Draw :/
 public:
-    void draw();
+    void draw(bool _drawNodes, bool _drawControl);
     void drawNodes();
     void drawControl();
 };
