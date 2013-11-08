@@ -15,7 +15,11 @@ CRGB leds_4[NUM_LEDS];
 CRGB leds_5[NUM_LEDS];
 CRGB leds_6[NUM_LEDS];
 
+#define nbLoopsForHeartBeat 5000
+double nbLoops;
+
 void setup() {
+  nbLoops = 0;
   // initialize serial communication:
   Serial.begin(9600);
   // initialize the LED pin as an output:
@@ -43,9 +47,17 @@ void setupLEDS() {
 
 void loop() {
 
-  int idCard = 1;
+  String  sIdCard = "001";
+  int     iIdCard = 1;
+  
   String  receivedMsg;
-
+  
+  nbLoops++;
+  if(nbLoops>nbLoopsForHeartBeat){
+    nbLoops = 0;
+    Serial.print(HEAD + sIdCard + HEARTBEAT + TAIL);
+  }
+  
   int nbCar = Serial.available();
 
   if (nbCar>0){
@@ -65,7 +77,7 @@ void loop() {
     if(receivedMsg[0]== '[' && receivedMsg[1]== '[' && receivedMsg[2]== '['){
       // On controle l'ID
       idReceived = receivedMsg.substring(3,6).toInt();
-      if(idReceived==idCard){
+      if(idReceived==iIdCard){
         idControl = true;
       }
       // On cherche le big Mode

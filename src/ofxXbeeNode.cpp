@@ -24,6 +24,7 @@ ofxXbeeNode::ofxXbeeNode(const ofxXbeeNode &_xbeeNode){
 // -------------------------------------------------
 void ofxXbeeNode::setup(string _id){
     m_sID = _id;
+    m_bHeartBeat = false;
 }
 
 // -------------------------------------------------

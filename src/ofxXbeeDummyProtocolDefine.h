@@ -40,6 +40,7 @@
 
 #define HEAD "[[["
 #define TAIL "]"
+#define HEARTBEAT "HeartBeat"
 
 #define BigMode_Out    "OUT"
 #define BigMode_In    "_IN"   // Waiting for implementation

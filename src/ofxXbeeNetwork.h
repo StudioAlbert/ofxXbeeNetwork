@@ -29,11 +29,12 @@ private:
     stack<string>      m_aSerialMessages;
 
     // All stufff required to read
-    char		bytesRead[3];				// data from serial, we will be trying to read 3
-    char		bytesReadString[4];			// a string needs a null terminator, so we need 3 + 1 bytes
-    int			nBytesRead;					// how much did we read?
-    int			nTimesRead;					// how many times did we read?
-    float		readTime;					// when did we last read?
+    double  m_iTimesRead;       // how many message did we read?
+    string  m_sReadTimeStamp;	// when did we last read?
+    string  m_sReadLastMsg;         // What did we read ?
+    string  m_sCurrentMsg;
+
+
 
 public:
     string getSerialStatus();
@@ -52,8 +53,9 @@ public:
     
 private:
     void serialSetup(string _connectionString);
-    void serialSend(string _msgToSend);
     void serialRead();
+public:
+    void serialSend(string _msgToSend);
     
     // Draw :/
 public:

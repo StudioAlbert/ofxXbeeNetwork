@@ -69,5 +69,12 @@ public:
 
     ofxXbeeNetwork      m_oXbees;
     
+    ofxPanel        m_pnlSetupXbeeEmitter;
+    ofxButton       m_btStartConfig;
+    ofxButton       m_btAskConfig;
+    ofxButton       m_btAskNumber;
+    ofxButton       m_btEndConfig;
+    
+    
 };
 

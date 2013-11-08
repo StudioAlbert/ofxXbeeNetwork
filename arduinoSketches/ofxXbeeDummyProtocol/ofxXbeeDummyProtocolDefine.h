@@ -40,11 +40,15 @@
 
 #define HEAD "[[["
 #define TAIL "]"
+#define HEARTBEAT "HeartBeat"
 
 #define BigMode_Out    "OUT"
 #define BigMode_In    "_IN"   // Waiting for implementation
 
-#define FineMode_All     "ALL"   // -> all strip 
-#define FineMode_Drop    "DRP"   // -> Able to do some drop falling (with digital led strips)
+#define FineMode_All   "ALL"   // -> analog outputs
+#define FineMode_Drop   "DRP"   // -> Able to do some drop falling (with digital led strips)
+
+#define STATUS_Connected "Connected"
+#define STATUS_NotConnected "Not Connected"
 
 

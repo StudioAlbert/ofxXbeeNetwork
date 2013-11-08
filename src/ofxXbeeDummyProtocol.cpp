@@ -33,3 +33,54 @@ string ofxXbeeDummyProtocol::wrGeneric(int _cardId, string _bigMode, string _fin
     
 }
 
+double ofxXbeeDummyProtocol::reCardID(string msg){
+    
+    string sCardId = "";
+    double iCardID = 0;
+    
+    if(ofIsStringInString(msg, HEAD) && ofIsStringInString(msg, TAIL) && msg.size()>=6){
+        
+        sCardId += msg[3];
+        sCardId += msg[4];
+        sCardId += msg[5];
+
+        iCardID = ofToDouble(sCardId);
+    }
+
+    return iCardID;
+    
+}
+
+bool ofxXbeeDummyProtocol::reHeartbeat(string msg){
+    
+    if(ofIsStringInString(msg, HEARTBEAT)){
+        return true;
+    }else{
+        return false;
+    }
+
+}
+
+bool ofxXbeeDummyProtocol::isComplete(string msg){
+    
+    string sHead = "";
+    string sTail = "";
+
+    if(ofIsStringInString(msg, HEAD) && ofIsStringInString(msg, TAIL) && msg.length()>=4){
+    
+        sHead += msg[0];
+        sHead += msg[1];
+        sHead += msg[2];
+        
+        sTail = msg[msg.length() - 1];
+        
+        if (sHead==HEAD && sTail==TAIL) {
+            return true;
+        }
+    }
+    
+    return false;
+    
+}
+
+

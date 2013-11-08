@@ -28,13 +28,18 @@ bool operator== (ofxXbeeNodePin &_pin1, ofxXbeeNodePin &_pin2){
     }else{
         // Comparison of each value : first difference give objects different
         for (int idxValue=0; idxValue<_pin1.m_aValues.size(); idxValue++) {
+            
+            //ofLogVerbose() << "operator == " << idxValue << " 1: " << _pin1.m_aValues[idxValue] << " 2: " << _pin2.m_aValues[idxValue];
+            
             if(_pin1.m_aValues[idxValue] != _pin2.m_aValues[idxValue]){
                 return false;
             }
+            
         }
     }
     
     // Nothing is different
+    //ofLogVerbose() << "Nothing is different";
     return true;
     
 }

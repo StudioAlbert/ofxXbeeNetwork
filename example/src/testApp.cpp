@@ -38,11 +38,11 @@ void testApp::setupAnims(){
             m_aAnims[animKey].setCurve(EASE_IN);
             
             m_oXbees.addNode(nodeKey);
-            m_oXbees.registerNodePin(nodeKey, 2, out);
-            m_oXbees.registerNodePin(nodeKey, 3, out);
-            m_oXbees.registerNodePin(nodeKey, 4, out);
-            m_oXbees.registerNodePin(nodeKey, 5, out);
-            m_oXbees.registerNodePin(nodeKey, 6, out);
+            m_oXbees.registerNodePin(nodeKey, 2, pinModePwm);
+            m_oXbees.registerNodePin(nodeKey, 3, pinModePwm);
+            m_oXbees.registerNodePin(nodeKey, 4, pinModePwm);
+            m_oXbees.registerNodePin(nodeKey, 5, pinModePwm);
+            m_oXbees.registerNodePin(nodeKey, 6, pinModePwm);
             
         }
     }
@@ -93,6 +93,13 @@ void testApp::setupGui(){
     m_pnlGeneric.add(   m_sliAllPin4.setup("All pin 4", 0, 0, 1));
     m_pnlGeneric.add(   m_sliAllPin5.setup("All pin 5", 0, 0, 1));
     m_pnlGeneric.add(   m_sliAllPin6.setup("All pin 6", 0, 0, 1));
+    
+    // SETUP Emitter --------------------------------
+    m_pnlSetupXbeeEmitter.setup("Setup Emitter", "Emitter.xml", 10, 500);
+    m_pnlSetupXbeeEmitter.add(m_btStartConfig.setup("Start Config"));
+    m_pnlSetupXbeeEmitter.add(m_btAskConfig.setup("Ask config"));
+    m_pnlSetupXbeeEmitter.add(m_btAskNumber.setup("Ask number"));
+    m_pnlSetupXbeeEmitter.add(m_btEndConfig.setup("End Config"));
     
 }
 
@@ -184,6 +191,23 @@ void testApp::updateGui(){
     m_sliDropPin5 = m_aAnims["1:5:Drop"].val();
     m_sliDropPin6 = m_aAnims["1:6:Drop"].val();
     
+    if(m_btStartConfig){
+        m_oXbees.serialSend("+++");
+        ofSleepMillis(1000);
+    }
+    if(m_btAskConfig){
+        m_oXbees.serialSend("AT\r\n");
+        ofSleepMillis(1000);
+    }
+    if(m_btAskNumber){
+        m_oXbees.serialSend("ATID\r\n");
+        ofSleepMillis(1000);
+    }
+    if(m_btEndConfig){
+        m_oXbees.serialSend("ATCN\r\n");
+        ofSleepMillis(1000);
+    }
+    
 }
 
 //--------------------------------------------------------------
@@ -192,6 +216,7 @@ void testApp::draw(){
     // FOR REAL ----------------------------------
     m_pnlAnimations.draw();
     m_pnlGeneric.draw();
+    m_pnlSetupXbeeEmitter.draw();
     
     // Xbee State
     string xBeeFullState = m_oXbees.getSerialFullState();
