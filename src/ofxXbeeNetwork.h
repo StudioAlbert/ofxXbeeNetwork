@@ -8,7 +8,7 @@
 
 #pragma once
 
-#define MAX_MSGS_SENT   50
+#define MAX_MSGS_SENT   25
 
 #include "ofxXbeeDummyProtocol.h"
 #include "ofxXbeeNode.h"
@@ -18,6 +18,8 @@ class ofxXbeeNetwork {
     // Array of all nodes of your network
 protected:
     map<string, ofxXbeeNode> m_aNodes;
+    map<string, ofxXbeeNode>::iterator curNodeToSend;
+    
 public:
     map<string, ofxXbeeNode> getNodes(){return m_aNodes;};
     // No setter

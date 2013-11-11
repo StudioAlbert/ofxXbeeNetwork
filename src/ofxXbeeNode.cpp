@@ -19,12 +19,18 @@ ofxXbeeNode::ofxXbeeNode(const ofxXbeeNode &_xbeeNode){
     m_bHeartBeat    = _xbeeNode.m_bHeartBeat;
     m_sID           = _xbeeNode.m_sID;
     
+    m_sLastHeartBeat = _xbeeNode.m_sLastHeartBeat;
+    m_sFirstHeartBeat = _xbeeNode.m_sFirstHeartBeat;
+    
 }
 
 // -------------------------------------------------
 void ofxXbeeNode::setup(string _id){
     m_sID = _id;
     m_bHeartBeat = false;
+    m_sLastHeartBeat = "";
+    m_sFirstHeartBeat = "";
+
 }
 
 // -------------------------------------------------
@@ -64,7 +70,7 @@ void ofxXbeeNode::setAllStrip(int _pin, float _value){
     newValues.push_back(_value);
     
     if(m_aPins[_pin].changePin(pinModePwm, newValues)){
-        pushMessage(ofxXbeeDummyProtocol::wrPwm(ofToInt(m_sID), _pin, _value));
+        pushMessage(ofxXbeeDummyProtocol::wrPwm(m_sID, _pin, _value));
     }
 
 }
@@ -76,7 +82,7 @@ void ofxXbeeNode::setDropPosition(int _pin, float _position){
     newValues.push_back(_position);
     
     if(m_aPins[_pin].changePin(pinModeDrop, newValues)){
-        pushMessage(ofxXbeeDummyProtocol::wrDrop(ofToInt(m_sID), _pin, _position));
+        pushMessage(ofxXbeeDummyProtocol::wrDrop(m_sID, _pin, _position));
     }
     
     
@@ -88,6 +94,9 @@ void ofxXbeeNode::draw(ofPoint _pos, float _xSize, float _ySize){
     ofTranslate(_pos);
     
     ofDrawBitmapString(m_sID, ofPoint(10,20));
+    
+    ofDrawBitmapString("First : " + m_sFirstHeartBeat, ofPoint(10,30));
+    ofDrawBitmapString("Last : " + m_sLastHeartBeat, ofPoint(10,40));
     
     // HeartBeat --
     ofPushStyle();
@@ -113,4 +122,17 @@ void ofxXbeeNode::draw(ofPoint _pos, float _xSize, float _ySize){
     
     
     ofPopMatrix();
+}
+
+
+// ----------------------------------------
+void ofxXbeeNode::switchHeartBeat(){
+    m_bHeartBeat = !m_bHeartBeat;
+    
+    if (m_sFirstHeartBeat=="") {
+        m_sFirstHeartBeat=ofGetTimestampString();
+    }
+    
+    m_sLastHeartBeat = ofGetTimestampString();
+    
 }

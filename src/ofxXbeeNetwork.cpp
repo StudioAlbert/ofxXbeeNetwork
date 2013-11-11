@@ -11,6 +11,9 @@
 // -----------------------------------------
 void ofxXbeeNetwork::setup(string _connectionString){
     serialSetup(_connectionString);
+    
+    curNodeToSend = m_aNodes.begin();
+    
 }
 
 // -----------------------------------------
@@ -52,35 +55,35 @@ void ofxXbeeNetwork::registerNodePin(string _IDNode, int _pinNum, pinMode _pinMo
 // -----------------------------------------------
 void ofxXbeeNetwork::update(){
     
-    map<string, ofxXbeeNode>::iterator oneXbee;
+    int nbMessage = 0;
     
-    /*
-    for (oneXbee = m_aNodes.begin(); oneXbee != m_aNodes.end(); oneXbee++){
-        // Here we update (creating messages)
-        (*oneXbee).second.update();
+    if(!m_aNodes.empty()){
+        
+    // We just send a node at a time
+    curNodeToSend++;
+    if(curNodeToSend == m_aNodes.end()){
+        curNodeToSend = m_aNodes.begin();
     }
-    */
     
-    for (oneXbee = m_aNodes.begin(); oneXbee != m_aNodes.end(); oneXbee++){
-        // No we got the messages and send
-        string message = EMPTY_MSGS;
-        int nbMessage = 0;
+    
+    // No we got the messages and send
+    string message = EMPTY_MSGS;
 
-        do{
-            // ---
-            message = (*oneXbee).second.popNextMessage();
-            if(message != EMPTY_MSGS){
-                ofLogNotice() << "Message Num = " << ofToString(nbMessage) << " Content:" << message;
-                serialSend(message);
-            }else{
-                //ofLogVerbose() << "All messages consumed";
-                break;
-            }
+    do{
+        // ---
+        message = (*curNodeToSend).second.popNextMessage();
+        if(message != EMPTY_MSGS){
+            //ofLogNotice() << "Message Num = " << ofToString(nbMessage) << " Content:" << message;
+            serialSend(message);
+        }else{
+            //ofLogVerbose() << "All messages consumed";
+            break;
+        }
+        
+        // Counting to not send too much messages
+        nbMessage++;
             
-            // Counting to not send too much messages
-            nbMessage++;
-            
-        } while (nbMessage<=MAX_MSGS_SENT);
+    } while (nbMessage<=MAX_MSGS_SENT);
     }
     
     // After Sending, we listen
@@ -92,18 +95,20 @@ void ofxXbeeNetwork::update(){
 void ofxXbeeNetwork::serialSend(string _msgToSend){
     
     if(m_oSerial.isInitialized()){
+        
         // Envoi des caractères
-        for(int idxChar = 0; idxChar< _msgToSend.length(); idxChar++){
-            m_oSerial.writeByte(_msgToSend[idxChar]);
-        }
+        unsigned char *msgChar = (unsigned char *)_msgToSend.c_str();
+        m_oSerial.writeBytes(msgChar, _msgToSend.length());
+        
         // Log Message
         ofLogVerbose() << "Sending : " << _msgToSend;
+        
         // Logging
         m_aSerialMessages.push(ofGetTimestampString() + " : " +_msgToSend);
         if (m_aSerialMessages.size()>10) {
             m_aSerialMessages.pop();
         }
-        //m_aSerialMessages.resize(10);
+        
         // Status
         m_sSerialStatus = STATUS_Connected;
         
@@ -121,18 +126,19 @@ void ofxXbeeNetwork::serialRead(){
     vector<string>   receivedMsg;
     
     string  oneMessage = "";
-    double  cardId = 0;
+    string  sCardId = "";
     bool    heartBeat = false;
     
     bool    gotHead = false;
     
-    
+    if(m_oSerial.isInitialized()){
+
     if(m_oSerial.available()){
         
         while(m_oSerial.available()){
             
             m_sCurrentMsg += m_oSerial.readByte();
-            /*
+            
             if (m_sCurrentMsg.size()>=1 && m_sCurrentMsg[0] != '[') {
                 m_sCurrentMsg = "";
             }else if (m_sCurrentMsg.size()>=2 && m_sCurrentMsg[1] != '['){
@@ -146,7 +152,7 @@ void ofxXbeeNetwork::serialRead(){
                 receivedMsg.push_back(m_sCurrentMsg);
                 m_sCurrentMsg = "";
             }
-            */
+            
         };
         
         m_iTimesRead ++;
@@ -160,20 +166,20 @@ void ofxXbeeNetwork::serialRead(){
             m_sReadTimeStamp = ofGetTimestampString();
             m_sReadLastMsg = oneMessage;
             
-            cardId      = ofxXbeeDummyProtocol::reCardID(oneMessage);
-            heartBeat   = ofxXbeeDummyProtocol::reHeartbeat(oneMessage);
+            sCardId         = ofxXbeeDummyProtocol::reCardID(oneMessage);
+            heartBeat       = ofxXbeeDummyProtocol::reHeartbeat(oneMessage);
             
-            ofLogVerbose() << "Message Read : " << oneMessage << " ID Card: " << cardId << " Heartbeat: " << ofToString(heartBeat);
+            ofLogVerbose() << "Message Read : " << oneMessage << " ID Card: " << sCardId << " Heartbeat: " << ofToString(heartBeat);
             
-            if(cardId>0 && heartBeat==true){
+            if(sCardId!="" && heartBeat==true){
                 // in case of heartbeat
-                map<string, ofxXbeeNode>::iterator oneNode = m_aNodes.find(ofToString(cardId, 0, 4, '0'));
+                map<string, ofxXbeeNode>::iterator oneNode = m_aNodes.find(sCardId);
                 if(oneNode!=m_aNodes.end()){
                     (*oneNode).second.switchHeartBeat();
                 }
             }
         }
-
+    }
     }
     
     
@@ -192,6 +198,17 @@ string ofxXbeeNetwork::getSerialFullState(){
     
     fullState.append("Connection string : " + m_sSerialString + "\n");
     fullState.append("Connection status : " + m_sSerialStatus + "\n");
+    
+    fullState.append("\n");
+    fullState.append("Current reading :\n");
+    fullState.append(m_sCurrentMsg + "\n");
+    
+    fullState.append("Nb Message read :\n");
+    fullState.append(ofToString(m_iTimesRead) + "\n");
+    
+    fullState.append("Last Message read :\n");
+    fullState.append(m_sReadTimeStamp + " : " + m_sReadLastMsg + "\n");
+    
     fullState.append("\n");
     fullState.append("Messages written :\n");
     
@@ -200,13 +217,6 @@ string ofxXbeeNetwork::getSerialFullState(){
         m_aSerialMessages.pop();
     }
     
-    fullState.append("\n");
-    fullState.append("Current reading :\n");
-    fullState.append(m_sCurrentMsg + "\n");
-    fullState.append("Nb Message read :\n");
-    fullState.append(ofToString(m_iTimesRead) + "\n");
-    fullState.append("Last Message read :\n");
-    fullState.append(m_sReadTimeStamp + " : " + m_sReadLastMsg + "\n");
     
     return fullState;
     
@@ -214,6 +224,7 @@ string ofxXbeeNetwork::getSerialFullState(){
 
 // -------------------------------------------------
 void ofxXbeeNetwork::setNodeAllStrip(string _IDNode, int _pin, float _value){
+    
     // First we check if the id was noticed first
     map<string, ofxXbeeNode>::iterator nodeFound;
     

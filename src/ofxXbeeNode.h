@@ -60,9 +60,12 @@ public:
     // HeartBeat -- We wanna know if this node is already on
 protected:
     bool    m_bHeartBeat;
+    string  m_sLastHeartBeat;
+    string  m_sFirstHeartBeat;
+    
 public:
     bool    getHeartBeat(){return m_bHeartBeat;}
-    void    switchHeartBeat(){m_bHeartBeat = !m_bHeartBeat;}
+    void    switchHeartBeat();
     
     // Draw it :/
 public:

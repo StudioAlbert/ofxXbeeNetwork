@@ -8,20 +8,20 @@
 
 #include "ofxXbeeDummyProtocol.h"
 
-string ofxXbeeDummyProtocol::wrPwm(int _cardId, int _pin, float _value){
+string ofxXbeeDummyProtocol::wrPwm(string _cardId, int _pin, float _value){
     return wrGeneric(_cardId, BigMode_Out, FineMode_All, _pin, _value);
 }
 
-string ofxXbeeDummyProtocol::wrDrop(int _cardId, int _pin, float _position){
+string ofxXbeeDummyProtocol::wrDrop(string _cardId, int _pin, float _position){
     return wrGeneric(_cardId, BigMode_Out, FineMode_Drop, _pin, _position);
 }
 
-string ofxXbeeDummyProtocol::wrGeneric(int _cardId, string _bigMode, string _fineMode, int _pwmPin, float _arg1){
+string ofxXbeeDummyProtocol::wrGeneric(string _cardId, string _bigMode, string _fineMode, int _pwmPin, float _arg1){
     
     string return_wrPwm = "";
     
     return_wrPwm.append(HEAD);
-    return_wrPwm.append(ofToString(_cardId, 0, 3, '0'));
+    return_wrPwm.append(_cardId);
     return_wrPwm.append(_bigMode);
     return_wrPwm.append(_fineMode);
     return_wrPwm.append(ofToString(_pwmPin, 0, 3, '0'));
@@ -33,21 +33,20 @@ string ofxXbeeDummyProtocol::wrGeneric(int _cardId, string _bigMode, string _fin
     
 }
 
-double ofxXbeeDummyProtocol::reCardID(string msg){
+string ofxXbeeDummyProtocol::reCardID(string msg){
     
     string sCardId = "";
-    double iCardID = 0;
     
-    if(ofIsStringInString(msg, HEAD) && ofIsStringInString(msg, TAIL) && msg.size()>=6){
+    if(ofIsStringInString(msg, HEAD) && ofIsStringInString(msg, TAIL) && msg.size()>=7){
         
         sCardId += msg[3];
         sCardId += msg[4];
         sCardId += msg[5];
+        sCardId += msg[6];
 
-        iCardID = ofToDouble(sCardId);
     }
 
-    return iCardID;
+    return sCardId;
     
 }
 

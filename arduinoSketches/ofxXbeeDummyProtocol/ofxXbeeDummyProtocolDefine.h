@@ -41,6 +41,7 @@
 #define HEAD "[[["
 #define TAIL "]"
 #define HEARTBEAT "HeartBeat"
+#define ID_ASKING "ID_Asking"
 
 #define BigMode_Out    "OUT"
 #define BigMode_In    "_IN"   // Waiting for implementation
@@ -50,5 +51,13 @@
 
 #define STATUS_Connected "Connected"
 #define STATUS_NotConnected "Not Connected"
+
+#define XBEEID_NONE  "NONE"
+
+#define XBEE_StartConfig  "+++"
+#define XBEE_AskConfig    "AT"
+#define XBEE_AskXbeeId    "ATID"
+#define XBEE_EndConfig    "ATCN"
+
 
 
