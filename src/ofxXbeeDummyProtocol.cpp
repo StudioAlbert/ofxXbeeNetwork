@@ -15,10 +15,9 @@ string ofxXbeeDummyProtocol::wrPwm(string _cardId, int _pin, float _value){
     return wrGeneric(_cardId, BigMode_Out, FineMode_All, _pin, args);
 }
 
-string ofxXbeeDummyProtocol::wrDrop(string _cardId, int _pin, float _position, float _smoothness){
+string ofxXbeeDummyProtocol::wrDrop(string _cardId, int _pin, float _position){
     vector<float> args;
     args.push_back(_position);
-    args.push_back(_smoothness);
     
     return wrGeneric(_cardId, BigMode_Out, FineMode_Drop, _pin, args);
 }

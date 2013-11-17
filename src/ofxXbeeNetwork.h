@@ -49,17 +49,17 @@ public:
     
     void addNode(string _IDNode);
     void registerNodePin(string _IDNode, int _pinNum, pinMode _pinMode);
-    void setNodePin(string _IDNode, int _pinNum, pinMode _pinMode, vector<float> _newValues);
+    void setNodePin(string _IDNode, int _pinNum, pinMode _pinMode, float _newValue);
     
     // ReDrive orders trough the network to the nodes
     void    setNodeAllStrip(string _IDNode, int _pin, float _value);
-    void    setNodeDrop(string _IDNode, int _pin, float _position, float _smoothness);
+    void    setNodeDrop(string _IDNode, int _pin, float _position);
 
 private:
-    void    sendNodePin(string _IDNode, int _pin, pinMode _mode, vector<float> _values);
+    void    sendNodePin(string _IDNode, int _pin, pinMode _mode, float _value);
 public:
     void    sendNodePwm(string _IDNode, int _pin, float _brightness);
-    void    sendNodeDrop(string _IDNode, int _pin, float _position, float _smoothness);
+    void    sendNodeDrop(string _IDNode, int _pin, float _position);
     
 private:
     void serialSetup(string _connectionString);

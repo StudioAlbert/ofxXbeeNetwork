@@ -27,14 +27,13 @@ public:
     pinMode         getMode();
     
 private:
-    vector<float>   m_aValues;
+    float           m_fValue;
 public:
-    vector<float>   getValues(){return m_aValues;};
-    float   getAValue(int _orderValue);
+    float   getValue();
     
 public:
-    bool changePin(pinMode _newMode, vector<float> _newValues);
-    void setPin(pinMode _newMode, vector<float>   m_aValues);
-    void registerPin(pinMode _newMode);
+    bool change(pinMode _newMode, float _newValue);
+    void set(pinMode _mode, float _value);
+    void setup(pinMode _newMode);
     
 };

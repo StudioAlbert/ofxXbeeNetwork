@@ -122,37 +122,47 @@ void testApp::update(){
 
     if(m_aAnims[nodeKey + ":2:Drop"].isAnimating()){
         m_sliAllPin2 = 0;
-        m_oXbees.sendNodeDrop(nodeKey, 2, m_sliDropPin2, m_pxDropSmoothness);
+        m_oXbees.sendNodeDrop(nodeKey, 2, m_sliDropPin2);
+        m_oXbees.setNodeDrop(nodeKey, 2, m_sliDropPin2);
     }else{
         m_oXbees.sendNodePwm(nodeKey, 2, m_sliAllPin2);
+        m_oXbees.setNodeAllStrip(nodeKey, 2, m_sliAllPin2);
     }
     
     if(m_aAnims[nodeKey + ":3:Drop"].isAnimating()){
         m_sliAllPin3 = 0;
-        m_oXbees.sendNodeDrop(nodeKey, 3, m_sliDropPin3, m_pxDropSmoothness);
+        m_oXbees.sendNodeDrop(nodeKey, 3, m_sliDropPin3);
+        m_oXbees.setNodeDrop(nodeKey, 3, m_sliDropPin3);
     }else{
         m_oXbees.sendNodePwm(nodeKey, 3, m_sliAllPin3);
+        m_oXbees.setNodeAllStrip(nodeKey, 3, m_sliAllPin3);
     }
     
     if(m_aAnims[nodeKey + ":4:Drop"].isAnimating()){
         m_sliAllPin4 = 0;
-        m_oXbees.sendNodeDrop(nodeKey, 4, m_sliDropPin4, m_pxDropSmoothness);
+        m_oXbees.sendNodeDrop(nodeKey, 4, m_sliDropPin4);
+        m_oXbees.setNodeDrop(nodeKey, 4, m_sliDropPin4);
     }else{
         m_oXbees.sendNodePwm(nodeKey, 4, m_sliAllPin4);
+        m_oXbees.setNodeAllStrip(nodeKey, 4, m_sliAllPin4);
     }
     
     if(m_aAnims[nodeKey + ":5:Drop"].isAnimating()){
         m_sliAllPin5 = 0;
-        m_oXbees.sendNodeDrop(nodeKey, 5, m_sliDropPin5, m_pxDropSmoothness);
+        m_oXbees.sendNodeDrop(nodeKey, 5, m_sliDropPin5);
+        m_oXbees.setNodeDrop(nodeKey, 5, m_sliDropPin5);
     }else{
         m_oXbees.sendNodePwm(nodeKey, 5, m_sliAllPin5);
+        m_oXbees.setNodeAllStrip(nodeKey, 5, m_sliAllPin5);
     }
     
     if(m_aAnims[nodeKey + ":6:Drop"].isAnimating()){
         m_sliAllPin6 = 0;
-        m_oXbees.sendNodeDrop(nodeKey, 6, m_sliDropPin6, m_pxDropSmoothness);
+        m_oXbees.sendNodeDrop(nodeKey, 6, m_sliDropPin6);
+        m_oXbees.setNodeDrop(nodeKey, 6, m_sliDropPin6);
     }else{
         m_oXbees.sendNodePwm(nodeKey, 6, m_sliAllPin6);
+        m_oXbees.setNodeAllStrip(nodeKey, 6, m_sliAllPin6);
     }
     
     m_oXbees.update(false, true);

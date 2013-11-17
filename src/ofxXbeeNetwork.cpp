@@ -53,8 +53,8 @@ void ofxXbeeNetwork::registerNodePin(string _IDNode, int _pinNum, pinMode _pinMo
 }
 
 // -----------------------------------------------
-void ofxXbeeNetwork::setNodePin(string _IDNode, int _pinNum, pinMode _pinMode, vector<float> _newValues){
-    m_aNodes[_IDNode].setPin(_pinNum, _pinMode, _newValues);
+void ofxXbeeNetwork::setNodePin(string _IDNode, int _pinNum, pinMode _pinMode, float _newValue){
+    m_aNodes[_IDNode].setPin(_pinNum, _pinMode, _newValue);
 }
 
 // -----------------------------------------------
@@ -257,14 +257,14 @@ void ofxXbeeNetwork::setNodeAllStrip(string _IDNode, int _pin, float _value){
 }
 
 // -------------------------------------------------
-void ofxXbeeNetwork::setNodeDrop(string _IDNode, int _pin, float _position, float _smoothness){
+void ofxXbeeNetwork::setNodeDrop(string _IDNode, int _pin, float _position){
     // First we check if the id was noticed first
     map<string, ofxXbeeNode>::iterator nodeFound;
     
     nodeFound = m_aNodes.find(_IDNode);
     if(nodeFound != m_aNodes.end()){
         // ID is found into the existing nodes
-        (*nodeFound).second.setDrop(_pin, _position, _smoothness);
+        m_aNodes[_IDNode].setDrop(_pin, _position);
     }
     
 }
@@ -320,25 +320,16 @@ void ofxXbeeNetwork::drawNodes(){
 
 // --------------------------------------------------------
 void ofxXbeeNetwork::sendNodePwm(string _IDNode, int _pin, float _value){
-    vector<float>   values;
-    values.push_back(_value);
-    
-    sendNodePin(_IDNode, _pin, pinModePwm, values);
-    
+    sendNodePin(_IDNode, _pin, pinModePwm, _value);
 }
 
 // --------------------------------------------------------
-void ofxXbeeNetwork::sendNodeDrop(string _IDNode, int _pin, float _position, float _smoothness){
-    vector<float>   values;
-    values.push_back(_position);
-    values.push_back(_smoothness);
-    
-    sendNodePin(_IDNode, _pin, pinModeDrop, values);
-    
+void ofxXbeeNetwork::sendNodeDrop(string _IDNode, int _pin, float _position){
+    sendNodePin(_IDNode, _pin, pinModeDrop, _position);
 }
 
 // --------------------------------------------------------
-void ofxXbeeNetwork::sendNodePin(string _IDNode, int _pin, pinMode _mode, vector<float> _values){
+void ofxXbeeNetwork::sendNodePin(string _IDNode, int _pin, pinMode _mode, float _value){
     
     map<string, ofxXbeeNode>::iterator  oneNode;
     map<int, ofxXbeeNodePin>::iterator  onePin;
@@ -349,22 +340,30 @@ void ofxXbeeNetwork::sendNodePin(string _IDNode, int _pin, pinMode _mode, vector
         onePin = (*oneNode).second.getPins().find(_pin);
         if (onePin != (*oneNode).second.getPins().end()) {
             
-            if((*onePin).second.changePin(_mode, _values)){
+            float value = m_aNodes[_IDNode].getPins()[_pin].getValue();
+            float mode = m_aNodes[_IDNode].getPins()[_pin].getMode();
+            
+            ofLogVerbose() << "Comparison : " << value << " : " << _value << ":" << ofToString(_value!=value);
+            ofLogVerbose() << "Comparison : " << mode << " : " << _mode << ":" << ofToString(_mode!=mode);
+            
+//            if((*onePin).second.change(_mode, _value)){
+            if(_mode!=mode || _value!=value){
                 ofLogVerbose() << "This pin will change : " << _IDNode << ":" << _pin;
                 
                 if (_mode == pinModeDrop) {
                     // Send Message to drop
-                    string msg = ofxXbeeDummyProtocol::wrDrop(_IDNode, _pin, _values[0], _values[1]);
+                    string msg = ofxXbeeDummyProtocol::wrDrop(_IDNode, _pin, _value);
                     serialSendMsg(msg);
                     
                 } else if (_mode == pinModePwm) {
                     // Send message to pwm (whole strip)
-                    string msg = ofxXbeeDummyProtocol::wrPwm(_IDNode, _pin, _values[0]);
+                    string msg = ofxXbeeDummyProtocol::wrPwm(_IDNode, _pin, _value);
                     // [0004OUTALL002120]
                     serialSendMsg(msg);
                 }
                 
             }
+        
         }
     }
     

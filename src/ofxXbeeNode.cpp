@@ -36,24 +36,9 @@ void ofxXbeeNode::setup(string _id){
 // -------------------------------------------------
 void ofxXbeeNode::registerPin(int _pinNum, pinMode _pinMode){
     ofxXbeeNodePin pinToRegister;
-    pinToRegister.registerPin(_pinMode);
+    pinToRegister.setup(_pinMode);
     
     m_aPins[_pinNum] = pinToRegister;
-    
-}
-
-// -------------------------------------------------
-void ofxXbeeNode::setPin(int _pinNum, pinMode _pinMode, vector<float>   _values){
-    // First we check if the number was noticed first
-    map<int, ofxXbeeNodePin>::iterator pinFound;
-    
-    pinFound = m_aPins.find(_pinNum);
-    if(pinFound != m_aPins.end()){
-        // pin is found into the existing pins
-        m_aPins[_pinNum].setPin(_pinMode, _values);
-    }else{
-        ofLogError() << "This num for your pin is not available." << _pinNum;
-    }
     
 }
 
@@ -80,33 +65,26 @@ string ofxXbeeNode::popNextMessage(){
 
 // -------------------------------------------------
 void ofxXbeeNode::setAllStrip(int _pin, float _value){
-    
-    vector<float> newValues;
-    newValues.push_back(_value);
-    setPin(_pin, pinModePwm, newValues);
-    
-    /*
-    if(m_aPins[_pin].changePin(pinModePwm, newValues)){
-        registerPin(_pin, pinModePwm, newValues);
-        pushMessage(ofxXbeeDummyProtocol::wrPwm(m_sID, _pin, _value));
-    }
-     */
+    setPin(_pin, pinModePwm, _value);
 }
 
 // -------------------------------------------------
-void ofxXbeeNode::setDrop(int _pin, float _position, float _smoothness){
+void ofxXbeeNode::setDrop(int _pin, float _position){
+    setPin(_pin, pinModeDrop, _position);
+}
+
+// -------------------------------------------------
+void ofxXbeeNode::setPin(int _pinNum, pinMode _pinMode, float   _value){
+    // First we check if the number was noticed first
+    map<int, ofxXbeeNodePin>::iterator pinFound;
     
-    vector<float> newValues;
-    newValues.push_back(_position);
-    newValues.push_back(_smoothness);
-    setPin(_pin, pinModeDrop, newValues);
-    
-    /*
-    if(m_aPins[_pin].changePin(pinModeDrop, newValues)){
-        registerPin(_pin, pinModeDrop, newValues);
-        pushMessage(ofxXbeeDummyProtocol::wrDrop(m_sID, _pin, _position));
+    pinFound = m_aPins.find(_pinNum);
+    if(pinFound != m_aPins.end()){
+        // pin is found into the existing pins
+        m_aPins[_pinNum].set(_pinMode, _value);
+    }else{
+        ofLogError() << "This num for your pin is not available." << _pinNum;
     }
-    */
     
 }
 
