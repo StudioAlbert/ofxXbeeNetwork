@@ -8,16 +8,17 @@
 
 #pragma once
 
-#define MAX_MSGS_SENT   25
-
 #include "ofxXbeeDummyProtocol.h"
 #include "ofxXbeeNode.h"
+
+#define  MaxMessagesTrace   64
 
 class ofxXbeeNetwork {
     
     // Array of all nodes of your network
 protected:
     map<string, ofxXbeeNode> m_aNodes;
+protected:
     map<string, ofxXbeeNode>::iterator curNodeToSend;
     
 public:
@@ -33,7 +34,7 @@ private:
     // All stufff required to read
     double  m_iTimesRead;       // how many message did we read?
     string  m_sReadTimeStamp;	// when did we last read?
-    string  m_sReadLastMsg;         // What did we read ?
+    string  m_sReadLastMsg;     // What did we read ?
     string  m_sCurrentMsg;
 
 
@@ -44,20 +45,28 @@ public:
     
 public:
     void setup(string _connectionString);
-    void update();
+    void update(bool _read, bool _write, int _nbMaxMessagesWrite = 1000);
     
     void addNode(string _IDNode);
     void registerNodePin(string _IDNode, int _pinNum, pinMode _pinMode);
+    void setNodePin(string _IDNode, int _pinNum, pinMode _pinMode, vector<float> _newValues);
     
     // ReDrive orders trough the network to the nodes
     void    setNodeAllStrip(string _IDNode, int _pin, float _value);
-    void    setNodeDropPosition(string _IDNode, int _pin, float _position);
+    void    setNodeDrop(string _IDNode, int _pin, float _position, float _smoothness);
+
+private:
+    void    sendNodePin(string _IDNode, int _pin, pinMode _mode, vector<float> _values);
+public:
+    void    sendNodePwm(string _IDNode, int _pin, float _brightness);
+    void    sendNodeDrop(string _IDNode, int _pin, float _position, float _smoothness);
     
 private:
     void serialSetup(string _connectionString);
     void serialRead();
+    void serialWrite(int _nbMaxMessages);
 public:
-    void serialSend(string _msgToSend);
+    void serialSendMsg(string _msgToSend);
     
     // Draw :/
 public:

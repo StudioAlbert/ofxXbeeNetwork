@@ -30,8 +30,6 @@ public:
     
     ofTrueTypeFont		font;
     
-    ofxPanel    m_pnlConnection2222;
-    
     ofxPanel    m_pnlConnection;
     ofParameter<string> m_pxConnection;
     
@@ -50,6 +48,7 @@ public:
     map<string, ofxAnimatableFloat> m_aAnims;
     
     ofxPanel        m_pnlGeneric;
+    ofxIntSlider    m_sliCardId;
     ofxIntSlider    m_sliPinNumber;
     
     ofxToggle       m_btAllOrDrop;
@@ -74,6 +73,8 @@ public:
     ofxButton       m_btAskConfig;
     ofxButton       m_btAskNumber;
     ofxButton       m_btEndConfig;
+    
+    string          nodeKey;
     
     
 };

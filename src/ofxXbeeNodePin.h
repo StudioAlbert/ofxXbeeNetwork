@@ -20,23 +20,21 @@ class ofxXbeeNodePin {
 public:
     ofxXbeeNodePin();
     ofxXbeeNodePin(ofxXbeeNodePin const &_pin);
-private:
-    friend bool operator== (ofxXbeeNodePin &_pin1, ofxXbeeNodePin &_pin2);
-    
+
 private:
     pinMode         m_eMode;
 public:
-    pinMode         getMode(){return m_eMode;};
+    pinMode         getMode();
     
 private:
     vector<float>   m_aValues;
 public:
+    vector<float>   getValues(){return m_aValues;};
     float   getAValue(int _orderValue);
     
 public:
-    bool changePin(pinMode _newMode, vector<float>   m_aValues);
-    void registerPin(pinMode _newMode, vector<float>   m_aValues);
+    bool changePin(pinMode _newMode, vector<float> _newValues);
+    void setPin(pinMode _newMode, vector<float>   m_aValues);
     void registerPin(pinMode _newMode);
-    
     
 };

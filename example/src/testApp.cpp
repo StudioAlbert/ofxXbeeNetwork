@@ -7,8 +7,11 @@ void testApp::setup(){
 	ofBackground(255);
 	ofSetLogLevel(OF_LOG_VERBOSE);
     
-    setupAnims();
     setupGui();
+    // xBee Adapter
+    m_oXbees.setup(m_pxConnection);
+    
+    setupAnims();
  	
     font.loadFont("DIN.otf", 64);
     
@@ -17,16 +20,15 @@ void testApp::setup(){
     //serial.setup("/dev/ttyUSB0", baud); //linux example
     // USB
     //m_oXbees.setup("tty.usbmodem1411");
-    // xBee Adapter
-    m_oXbees.setup(m_pxConnection);
+
     
 }
 
 //--------------------------------------------------------------
 void testApp::setupAnims(){
     
-    for (int idxNode=1; idxNode<=2; idxNode++) {
-        string nodeKey = ofToString(idxNode, 0, 1, '0');
+    for (int idxNode=1; idxNode<=8; idxNode++) {
+        string nodeKey = ofToString(idxNode, 0, 4, '0');
         
         for(int idxAnim=2; idxAnim<=6; idxAnim++){
             string animKey = nodeKey + ":" + ofToString(idxAnim, 0, 2, '0') + ":Drop";
@@ -43,6 +45,11 @@ void testApp::setupAnims(){
             m_oXbees.registerNodePin(nodeKey, 4, pinModePwm);
             m_oXbees.registerNodePin(nodeKey, 5, pinModePwm);
             m_oXbees.registerNodePin(nodeKey, 6, pinModePwm);
+            m_oXbees.registerNodePin(nodeKey, 7, pinModePwm);
+            m_oXbees.registerNodePin(nodeKey, 8, pinModePwm);
+            m_oXbees.registerNodePin(nodeKey, 9, pinModePwm);
+            m_oXbees.registerNodePin(nodeKey, 10, pinModePwm);
+            m_oXbees.registerNodePin(nodeKey, 11, pinModePwm);
             
         }
     }
@@ -71,14 +78,16 @@ void testApp::setupGui(){
 
     m_pnlAnimations.add(   m_lblAnimButtons.setup("Parameters", "Parameters"));
     m_pnlAnimations.add(   m_pxDropDuration.set("DropDuration", 0, 0, 10));
-    m_pnlAnimations.add(   m_pxDropSmoothness.set("DropSmoothness", 0, 0, 10));
+    m_pnlAnimations.add(   m_pxDropSmoothness.set("DropSmoothness", 0, 0, 1));
     
     m_pnlAnimations.loadFromFile("settings.xml");
     
     // GENERIC ---------------------------------------------------------------------------
     m_pnlGeneric.setup("Generic", "Generic.xml", 10, 200);
     
+    m_pnlGeneric.add(   m_sliCardId.setup("Card Id", 1, 1, 8));
     m_pnlGeneric.add(   m_sliPinNumber.setup("Pin number", 2, 2, 6));
+    
     m_pnlGeneric.add(   m_btAllOrDrop.setup("All or Drop", "All/Drop"));
     m_pnlGeneric.add(   m_btSend.setup("Sent"));
     
@@ -105,46 +114,48 @@ void testApp::setupGui(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+    int cardId = m_sliCardId;
+    nodeKey = ofToString(cardId, 0, 4, '0');
     
     updateAnims();
     updateGui();
 
-    if(m_aAnims["1:2:Drop"].isAnimating()){
+    if(m_aAnims[nodeKey + ":2:Drop"].isAnimating()){
         m_sliAllPin2 = 0;
-        m_oXbees.setNodeDropPosition("1", 2, m_sliDropPin2);
+        m_oXbees.sendNodeDrop(nodeKey, 2, m_sliDropPin2, m_pxDropSmoothness);
     }else{
-        m_oXbees.setNodeAllStrip("1", 2, m_sliAllPin2);
+        m_oXbees.sendNodePwm(nodeKey, 2, m_sliAllPin2);
     }
     
-    if(m_aAnims["1:3:Drop"].isAnimating()){
+    if(m_aAnims[nodeKey + ":3:Drop"].isAnimating()){
         m_sliAllPin3 = 0;
-        m_oXbees.setNodeDropPosition("1", 3, m_sliDropPin3);
+        m_oXbees.sendNodeDrop(nodeKey, 3, m_sliDropPin3, m_pxDropSmoothness);
     }else{
-        m_oXbees.setNodeAllStrip("1", 3, m_sliAllPin3);
+        m_oXbees.sendNodePwm(nodeKey, 3, m_sliAllPin3);
     }
     
-    if(m_aAnims["1:4:Drop"].isAnimating()){
+    if(m_aAnims[nodeKey + ":4:Drop"].isAnimating()){
         m_sliAllPin4 = 0;
-        m_oXbees.setNodeDropPosition("1", 4, m_sliDropPin4);
+        m_oXbees.sendNodeDrop(nodeKey, 4, m_sliDropPin4, m_pxDropSmoothness);
     }else{
-        m_oXbees.setNodeAllStrip("1", 4, m_sliAllPin4);
+        m_oXbees.sendNodePwm(nodeKey, 4, m_sliAllPin4);
     }
     
-    if(m_aAnims["1:5:Drop"].isAnimating()){
+    if(m_aAnims[nodeKey + ":5:Drop"].isAnimating()){
         m_sliAllPin5 = 0;
-        m_oXbees.setNodeDropPosition("1", 5, m_sliDropPin5);
+        m_oXbees.sendNodeDrop(nodeKey, 5, m_sliDropPin5, m_pxDropSmoothness);
     }else{
-        m_oXbees.setNodeAllStrip("1", 5, m_sliAllPin5);
+        m_oXbees.sendNodePwm(nodeKey, 5, m_sliAllPin5);
     }
     
-    if(m_aAnims["1:6:Drop"].isAnimating()){
+    if(m_aAnims[nodeKey + ":6:Drop"].isAnimating()){
         m_sliAllPin6 = 0;
-        m_oXbees.setNodeDropPosition("1", 6, m_sliDropPin6);
+        m_oXbees.sendNodeDrop(nodeKey, 6, m_sliDropPin6, m_pxDropSmoothness);
     }else{
-        m_oXbees.setNodeAllStrip("1", 6, m_sliAllPin6);
+        m_oXbees.sendNodePwm(nodeKey, 6, m_sliAllPin6);
     }
     
-    m_oXbees.update();
+    m_oXbees.update(false, true);
     
 }
 
@@ -165,46 +176,46 @@ void testApp::updateAnims(){
 void testApp::updateGui(){
     
     if(m_btAnimDropPin2==true){
-        m_aAnims["1:2:Drop"].setDuration(m_pxDropDuration);
-        m_aAnims["1:2:Drop"].animateFromTo(0, 1);
+        m_aAnims[nodeKey + ":2:Drop"].setDuration(m_pxDropDuration);
+        m_aAnims[nodeKey + ":2:Drop"].animateFromTo(0, 1);
     }
     if(m_btAnimDropPin3==true){
-        m_aAnims["1:3:Drop"].setDuration(m_pxDropDuration);
-        m_aAnims["1:3:Drop"].animateFromTo(0, 1);
+        m_aAnims[nodeKey + ":3:Drop"].setDuration(m_pxDropDuration);
+        m_aAnims[nodeKey + ":3:Drop"].animateFromTo(0, 1);
     }
     if(m_btAnimDropPin4==true){
-        m_aAnims["1:4:Drop"].setDuration(m_pxDropDuration);
-        m_aAnims["1:4:Drop"].animateFromTo(0, 1);
+        m_aAnims[nodeKey + ":4:Drop"].setDuration(m_pxDropDuration);
+        m_aAnims[nodeKey + ":4:Drop"].animateFromTo(0, 1);
     }
     if(m_btAnimDropPin5==true){
-        m_aAnims["1:5:Drop"].setDuration(m_pxDropDuration);
-        m_aAnims["1:5:Drop"].animateFromTo(0, 1);
+        m_aAnims[nodeKey + ":5:Drop"].setDuration(m_pxDropDuration);
+        m_aAnims[nodeKey + ":5:Drop"].animateFromTo(0, 1);
     }
     if(m_btAnimDropPin6==true){
-        m_aAnims["1:6:Drop"].setDuration(m_pxDropDuration);
-        m_aAnims["1:6:Drop"].animateFromTo(0, 1);
+        m_aAnims[nodeKey + ":6:Drop"].setDuration(m_pxDropDuration);
+        m_aAnims[nodeKey + ":6:Drop"].animateFromTo(0, 1);
     }
     
-    m_sliDropPin2 = m_aAnims["1:2:Drop"].val();
-    m_sliDropPin3 = m_aAnims["1:3:Drop"].val();
-    m_sliDropPin4 = m_aAnims["1:4:Drop"].val();
-    m_sliDropPin5 = m_aAnims["1:5:Drop"].val();
-    m_sliDropPin6 = m_aAnims["1:6:Drop"].val();
+    m_sliDropPin2 = m_aAnims[nodeKey + ":2:Drop"].val();
+    m_sliDropPin3 = m_aAnims[nodeKey + ":3:Drop"].val();
+    m_sliDropPin4 = m_aAnims[nodeKey + ":4:Drop"].val();
+    m_sliDropPin5 = m_aAnims[nodeKey + ":5:Drop"].val();
+    m_sliDropPin6 = m_aAnims[nodeKey + ":6:Drop"].val();
     
     if(m_btStartConfig){
-        m_oXbees.serialSend("+++");
+        m_oXbees.serialSendMsg("+++");
         ofSleepMillis(1000);
     }
     if(m_btAskConfig){
-        m_oXbees.serialSend("AT\r\n");
+        m_oXbees.serialSendMsg("AT\r\n");
         ofSleepMillis(1000);
     }
     if(m_btAskNumber){
-        m_oXbees.serialSend("ATID\r\n");
+        m_oXbees.serialSendMsg("ATID\r\n");
         ofSleepMillis(1000);
     }
     if(m_btEndConfig){
-        m_oXbees.serialSend("ATCN\r\n");
+        m_oXbees.serialSendMsg("ATCN\r\n");
         ofSleepMillis(1000);
     }
     
@@ -246,24 +257,24 @@ void testApp::draw(){
 void testApp::keyPressed  (int key){
     switch (key) {
         case 'x':
-            m_aAnims["1:2:Drop"].setDuration(m_pxDropDuration);
-            m_aAnims["1:2:Drop"].animateFromTo(0, 1);
+            m_aAnims[nodeKey + ":2:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims[nodeKey + ":2:Drop"].animateFromTo(0, 1);
             break;
         case 'c':
-            m_aAnims["1:3:Drop"].setDuration(m_pxDropDuration);
-            m_aAnims["1:3:Drop"].animateFromTo(0, 1);
+            m_aAnims[nodeKey + ":3:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims[nodeKey + ":3:Drop"].animateFromTo(0, 1);
             break;
         case 'v':
-            m_aAnims["1:4:Drop"].setDuration(m_pxDropDuration);
-            m_aAnims["1:4:Drop"].animateFromTo(0, 1);
+            m_aAnims[nodeKey + ":4:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims[nodeKey + ":4:Drop"].animateFromTo(0, 1);
             break;
         case 'b':
-            m_aAnims["1:5:Drop"].setDuration(m_pxDropDuration);
-            m_aAnims["1:5:Drop"].animateFromTo(0, 1);
+            m_aAnims[nodeKey + ":5:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims[nodeKey + ":5:Drop"].animateFromTo(0, 1);
             break;
         case 'n':
-            m_aAnims["1:6:Drop"].setDuration(m_pxDropDuration);
-            m_aAnims["1:6:Drop"].animateFromTo(0, 1);
+            m_aAnims[nodeKey + ":6:Drop"].setDuration(m_pxDropDuration);
+            m_aAnims[nodeKey + ":6:Drop"].animateFromTo(0, 1);
             break;
             
         default:

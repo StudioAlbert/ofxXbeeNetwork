@@ -45,7 +45,7 @@ public:
     // Drive a node is only about adding and adding message --
 public:
     void    setAllStrip(int _pin, float _value);
-    void    setDropPosition(int _pin, float _position);
+    void    setDrop(int _pin, float _position, float _smoothness);
     
 public:
     void setup(string _id);
@@ -56,6 +56,7 @@ protected:
 public:
     map<int, ofxXbeeNodePin> getPins(){return m_aPins;};
     void registerPin(int _pinNum, pinMode _pinMode);
+    void setPin(int _pinNum, pinMode _pinMode, vector<float> _values);
     
     // HeartBeat -- We wanna know if this node is already on
 protected:
