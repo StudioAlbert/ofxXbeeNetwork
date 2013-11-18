@@ -148,7 +148,7 @@ void ofxXbeeNetwork::serialRead(){
         while(m_oSerial.available()){
             
             m_sCurrentMsg += m_oSerial.readByte();
-            ofLogVerbose() << "Received : " << m_sCurrentMsg;
+            //ofLogVerbose() << "Received : " << m_sCurrentMsg;
             
             if (m_sCurrentMsg.size()>=1 && m_sCurrentMsg[0] != '[') {
                 m_sCurrentMsg = "";
@@ -343,10 +343,6 @@ void ofxXbeeNetwork::sendNodePin(string _IDNode, int _pin, pinMode _mode, float 
             float value = m_aNodes[_IDNode].getPins()[_pin].getValue();
             float mode = m_aNodes[_IDNode].getPins()[_pin].getMode();
             
-            ofLogVerbose() << "Comparison : " << value << " : " << _value << ":" << ofToString(_value!=value);
-            ofLogVerbose() << "Comparison : " << mode << " : " << _mode << ":" << ofToString(_mode!=mode);
-            
-//            if((*onePin).second.change(_mode, _value)){
             if(_mode!=mode || _value!=value){
                 ofLogVerbose() << "This pin will change : " << _IDNode << ":" << _pin;
                 
