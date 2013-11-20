@@ -261,6 +261,8 @@ void ofxXbeeNetwork::setNodeDrop(string _IDNode, int _pin, float _position){
     // First we check if the id was noticed first
     map<string, ofxXbeeNode>::iterator nodeFound;
     
+    ofLogVerbose() << "Animation value : " << _position;
+    
     nodeFound = m_aNodes.find(_IDNode);
     if(nodeFound != m_aNodes.end()){
         // ID is found into the existing nodes
@@ -334,6 +336,8 @@ void ofxXbeeNetwork::sendNodePin(string _IDNode, int _pin, pinMode _mode, float 
     map<string, ofxXbeeNode>::iterator  oneNode;
     map<int, ofxXbeeNodePin>::iterator  onePin;
     
+    _value = ofClamp(_value, 0, 1);
+    
     oneNode = m_aNodes.find(_IDNode);
     if (oneNode != m_aNodes.end()) {
         
@@ -344,17 +348,16 @@ void ofxXbeeNetwork::sendNodePin(string _IDNode, int _pin, pinMode _mode, float 
             float mode = m_aNodes[_IDNode].getPins()[_pin].getMode();
             
             if(_mode!=mode || _value!=value){
-                ofLogVerbose() << "This pin will change : " << _IDNode << ":" << _pin;
+                
+                ofLogVerbose() << "This pin will change : " << _IDNode << ":" << _pin << " : " << value << "!=" << _value;
                 
                 if (_mode == pinModeDrop) {
                     // Send Message to drop
                     string msg = ofxXbeeDummyProtocol::wrDrop(_IDNode, _pin, _value);
                     serialSendMsg(msg);
-                    
                 } else if (_mode == pinModePwm) {
                     // Send message to pwm (whole strip)
                     string msg = ofxXbeeDummyProtocol::wrPwm(_IDNode, _pin, _value);
-                    // [0004OUTALL002120]
                     serialSendMsg(msg);
                 }
                 

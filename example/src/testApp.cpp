@@ -178,6 +178,7 @@ void testApp::updateAnims(){
     map<string, ofxAnimatableFloat>::iterator   oneAnim;
     for(oneAnim = m_aAnims.begin(); oneAnim != m_aAnims.end(); oneAnim++){
         (*oneAnim).second.update(dt);
+        ofLogVerbose() << (*oneAnim).first << ":" << ofToString((*oneAnim).second.val());
     }
     
 }
