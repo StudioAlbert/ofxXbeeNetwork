@@ -142,64 +142,69 @@ void ofxXbeeNetwork::serialRead(){
     bool    gotHead = false;
     
     if(m_oSerial.isInitialized()){
-
-    if(m_oSerial.available()){
         
-        while(m_oSerial.available()){
+        if(m_oSerial.available()){
             
-            m_sCurrentMsg += m_oSerial.readByte();
-            //ofLogVerbose() << "Received : " << m_sCurrentMsg;
-            
-            if (m_sCurrentMsg.size()>=1 && m_sCurrentMsg[0] != '[') {
-                m_sCurrentMsg = "";
-            }
-            if(m_sCurrentMsg.size()>=64){
-                m_sCurrentMsg = "";
-            }
+            while(m_oSerial.available()){
+                
+                m_sCurrentMsg += m_oSerial.readByte();
+                //ofLogVerbose() << "Received : " << m_sCurrentMsg;
+                
+                if (m_sCurrentMsg.size()>=1 && m_sCurrentMsg[0] != '[') {
+                    m_sCurrentMsg = "";
+                }
+                if(m_sCurrentMsg.size()>=64){
+                    m_sCurrentMsg = "";
+                }
                 /*
-            }else if (m_sCurrentMsg.size()>=2 && m_sCurrentMsg[1] != '['){
-                m_sCurrentMsg = "";
-            }else if (m_sCurrentMsg.size()>=3 && m_sCurrentMsg[2] != '['){
-                m_sCurrentMsg = "";
-            }
+                 }else if (m_sCurrentMsg.size()>=2 && m_sCurrentMsg[1] != '['){
+                 m_sCurrentMsg = "";
+                 }else if (m_sCurrentMsg.size()>=3 && m_sCurrentMsg[2] != '['){
+                 m_sCurrentMsg = "";
+                 }
                  */
+                
+                // On parse les messages ------
+                if (ofxXbeeDummyProtocol::isComplete(m_sCurrentMsg)) {
+                    receivedMsg.push_back(m_sCurrentMsg);
+                    m_sCurrentMsg = "";
+                }
+                
+            };
             
-            // On parse les messages ------
-            if (ofxXbeeDummyProtocol::isComplete(m_sCurrentMsg)) {
-                receivedMsg.push_back(m_sCurrentMsg);
-                m_sCurrentMsg = "";
-            }
+            m_iTimesRead ++;
             
-        };
-        
-        m_iTimesRead ++;
-        
-        
-        while (!receivedMsg.empty())
-        {
-            oneMessage  = receivedMsg.back();
-            receivedMsg.pop_back();
             
-            m_sReadTimeStamp = ofGetTimestampString();
-            m_sReadLastMsg = oneMessage;
-            
-            sCardId         = ofxXbeeDummyProtocol::reCardID(oneMessage);
-            heartBeat       = ofxXbeeDummyProtocol::reHeartbeat(oneMessage);
-            
-            ofLogVerbose() << "Message Read : " << oneMessage << " ID Card: " << sCardId << " Heartbeat: " << ofToString(heartBeat);
-            
-            if(sCardId!="" && heartBeat==true){
-                // in case of heartbeat
-                map<string, ofxXbeeNode>::iterator oneNode = m_aNodes.find(sCardId);
-                if(oneNode!=m_aNodes.end()){
-                    (*oneNode).second.switchHeartBeat();
+            while (!receivedMsg.empty())
+            {
+                oneMessage  = receivedMsg.back();
+                receivedMsg.pop_back();
+                
+                m_sReadTimeStamp = ofGetTimestampString();
+                m_sReadLastMsg = oneMessage;
+                
+                sCardId         = ofxXbeeDummyProtocol::reCardID(oneMessage);
+                heartBeat       = ofxXbeeDummyProtocol::reHeartbeat(oneMessage);
+                
+                ofLogVerbose() << "Message Read : " << oneMessage << " ID Card: " << sCardId << " Heartbeat: " << ofToString(heartBeat);
+                
+                if(sCardId!="" && heartBeat==true){
+                    // in case of heartbeat
+                    map<string, ofxXbeeNode>::iterator oneNode = m_aNodes.find(sCardId);
+                    if(oneNode!=m_aNodes.end()){
+                        (*oneNode).second.switchHeartBeat();
+                    }
                 }
             }
         }
-    }
-    }
+        // Status
+        m_sSerialStatus = STATUS_Connected;
     
-    
+    }else{
+        
+        // Status
+        m_sSerialStatus = STATUS_NotConnected;
+    }
 
 }
 
