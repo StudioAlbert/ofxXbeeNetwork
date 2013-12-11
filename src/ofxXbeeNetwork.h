@@ -11,7 +11,7 @@
 #include "ofxXbeeDummyProtocol.h"
 #include "ofxXbeeNode.h"
 
-#define  MaxMessagesTrace   64
+#define  MaxMessagesTrace   10
 
 class ofxXbeeNetwork {
     
@@ -29,14 +29,14 @@ private:
     ofSerial            m_oSerial;
     string              m_sSerialString;
     string              m_sSerialStatus;
-    stack<string>      m_aSerialMessages;
+    list<string>      m_aSerialMessages;
 
     // All stufff required to read
     double  m_iTimesRead;       // how many message did we read?
     string  m_sReadTimeStamp;	// when did we last read?
     string  m_sReadLastMsg;     // What did we read ?
     string  m_sCurrentMsg;
-
+    string  m_sRoughMsg;
 
 
 public:
@@ -56,7 +56,7 @@ public:
     void    setNodeDrop(string _IDNode, int _pin, float _position);
 
 private:
-    void    sendNodePin(string _IDNode, int _pin, pinMode _mode, float _value);
+    void    sendNodePin(string _IDNode, int _pin, pinMode _mode, int _value);
 public:
     void    sendNodePwm(string _IDNode, int _pin, float _brightness);
     void    sendNodeDrop(string _IDNode, int _pin, float _position);

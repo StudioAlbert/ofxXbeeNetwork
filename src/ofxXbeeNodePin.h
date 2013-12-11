@@ -27,13 +27,13 @@ public:
     pinMode         getMode();
     
 private:
-    float           m_fValue;
+    int m_iValue;
 public:
-    float   getValue();
+    int getValue();
     
 public:
-    bool change(pinMode _newMode, float _newValue);
-    void set(pinMode _mode, float _value);
+    bool change(pinMode _newMode, int _newValue);
+    void set(pinMode _mode, int _value);
     void setup(pinMode _newMode);
     
 };

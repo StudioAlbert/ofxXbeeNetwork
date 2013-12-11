@@ -65,16 +65,16 @@ string ofxXbeeNode::popNextMessage(){
 
 // -------------------------------------------------
 void ofxXbeeNode::setAllStrip(int _pin, float _value){
-    setPin(_pin, pinModePwm, _value);
+    setPin(_pin, pinModePwm, ofxXbeeDummyProtocol::getValueClamped(_value));
 }
 
 // -------------------------------------------------
 void ofxXbeeNode::setDrop(int _pin, float _position){
-    setPin(_pin, pinModeDrop, _position);
+    setPin(_pin, pinModeDrop, ofxXbeeDummyProtocol::getValueClamped(_position));
 }
 
 // -------------------------------------------------
-void ofxXbeeNode::setPin(int _pinNum, pinMode _pinMode, float   _value){
+void ofxXbeeNode::setPin(int _pinNum, pinMode _pinMode, int   _value){
     // First we check if the number was noticed first
     map<int, ofxXbeeNodePin>::iterator pinFound;
     

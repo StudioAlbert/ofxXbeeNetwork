@@ -15,13 +15,16 @@
 class ofxXbeeDummyProtocol {
     
 public:
-    static string wrPwm(string _cardId, int _pwmPin, float _value);
-    static string wrDrop(string _cardId, int _pwmPin, float _position);
-    static string wrGeneric(string _cardId, string _bigMode, string _fineMode, int _pwmPin, vector<float> _args);
+    static string wrPwm(string _cardId, int _pwmPin, int _value);
+    static string wrDrop(string _cardId, int _pwmPin, int _position);
+    static string wrGeneric(string _cardId, string _fineMode, int _pwmPin, int _value);
     
     static string   reCardID(string msg);
     static bool     reHeartbeat(string msg);
     
     static bool     isComplete(string msg);
+    
+    static string   getCardIdString(int _CardId);
+    static int      getValueClamped(float _fValue);
     
 };

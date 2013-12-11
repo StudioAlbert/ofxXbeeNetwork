@@ -40,25 +40,28 @@
 
 #define HEAD "["
 #define TAIL "]"
-#define HEARTBEAT "HeartBeat"
+#define HEARTBEAT "H"
 #define ID_ASKING "ID_Asking"
 
-#define BigMode_Out    "OUT"
-#define BigMode_In    "_IN"   // Waiting for implementation
+#define CARDID_BEG  1
+#define CARDID_LEN  1
+/*
+ #define BigMode_Out    "OUT"
+ #define BigMode_In    "_IN"   // Waiting for implementation
+ */
+#define Mode_All   "A"   // -> analog outputs
+#define Mode_Drop   "D"   // -> Able to do some drop falling (with digital led strips)
+#define MODE_BEG  2
+#define MODE_LEN  1
 
-#define FineMode_All   "ALL"   // -> analog outputs
-#define FineMode_Drop   "DRP"   // -> Able to do some drop falling (with digital led strips)
+#define PIN_BEG  3
+#define PIN_LEN  1
+
+#define VAL_BEG  4
+#define VAL_LEN  2
+
+#define VAL_MAX  99
 
 #define STATUS_Connected "Connected"
 #define STATUS_NotConnected "Not Connected"
-
-#define XBEEID_NONE  "NONE"
-
-#define XBEE_StartConfig  "+++"
-#define XBEE_AskConfig    "AT"
-#define XBEE_AskXbeeId    "ATID"
-#define XBEE_EndConfig    "ATCN"
-
-
-
 

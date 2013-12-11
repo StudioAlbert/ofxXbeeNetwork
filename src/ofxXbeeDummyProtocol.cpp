@@ -8,35 +8,23 @@
 
 #include "ofxXbeeDummyProtocol.h"
 
-string ofxXbeeDummyProtocol::wrPwm(string _cardId, int _pin, float _value){
-    vector<float> args;
-    args.push_back(_value);
-    
-    return wrGeneric(_cardId, BigMode_Out, FineMode_All, _pin, args);
+string ofxXbeeDummyProtocol::wrPwm(string _cardId, int _pin, int _position){
+    return wrGeneric(_cardId, Mode_All, _pin, _position);
 }
 
-string ofxXbeeDummyProtocol::wrDrop(string _cardId, int _pin, float _position){
-    vector<float> args;
-    args.push_back(_position);
-    
-    return wrGeneric(_cardId, BigMode_Out, FineMode_Drop, _pin, args);
+string ofxXbeeDummyProtocol::wrDrop(string _cardId, int _pin, int _position){
+    return wrGeneric(_cardId, Mode_Drop, _pin, _position);
 }
 
-string ofxXbeeDummyProtocol::wrGeneric(string _cardId, string _bigMode, string _fineMode, int _pwmPin, vector<float> _args){
+string ofxXbeeDummyProtocol::wrGeneric(string _cardId, string _fineMode, int _pwmPin, int _value){
     
     string return_wrPwm = "";
-    vector<float>::iterator   itValue;
     
     return_wrPwm.append(HEAD);
     return_wrPwm.append(_cardId);
-    return_wrPwm.append(_bigMode);
     return_wrPwm.append(_fineMode);
-    return_wrPwm.append(ofToString(_pwmPin, 0, 3, '0'));
-    
-    for(itValue = _args.begin(); itValue!=_args.end(); itValue++){
-        return_wrPwm.append(ofToString((int)ofMap((*itValue), 0, 1, 0, 255), 0, 3, '0'));
-    }
-    
+    return_wrPwm.append(ofToString(_pwmPin, 0, PIN_LEN, '0'));
+    return_wrPwm.append(ofToString(_value, 0, VAL_LEN, '0'));
     
     return_wrPwm.append(TAIL);
     
@@ -48,13 +36,10 @@ string ofxXbeeDummyProtocol::reCardID(string msg){
     
     string sCardId = "";
     
-    if(isComplete(msg) && msg.size()>=5){
-        
-        sCardId += msg[1];
-        sCardId += msg[2];
-        sCardId += msg[3];
-        sCardId += msg[4];
-
+    if(isComplete(msg) && msg.size()>=CARDID_LEN+1){
+        for(int idxMsgChar=1; idxMsgChar<=CARDID_LEN; idxMsgChar++){
+            sCardId += msg[idxMsgChar];
+        }
     }
 
     return sCardId;
@@ -90,4 +75,12 @@ bool ofxXbeeDummyProtocol::isComplete(string msg){
     
 }
 
+string ofxXbeeDummyProtocol::getCardIdString(int _CardId){
+    return ofToString(_CardId, 0, CARDID_LEN, '0');
+}
+
+
+int ofxXbeeDummyProtocol::getValueClamped(float _fValue){
+    return ofMap(_fValue, 0, 1, 0, VAL_MAX, true);
+}
 

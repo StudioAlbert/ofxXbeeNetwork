@@ -15,16 +15,16 @@ ofxXbeeNodePin::ofxXbeeNodePin(){
 
 ofxXbeeNodePin::ofxXbeeNodePin(ofxXbeeNodePin const &_pin){
     m_eMode   = _pin.m_eMode;
-    m_fValue  = _pin.m_fValue;
+    m_iValue  = _pin.m_iValue;
 }
 
-bool ofxXbeeNodePin::change(pinMode _newMode, float _newValue){
+bool ofxXbeeNodePin::change(pinMode _newMode, int _newValue){
 
     if(m_eMode != _newMode){
         // if mode is different
         return true;
-    }else if(m_fValue != _newValue){
-        ofLogVerbose() << "Compared: " << m_fValue << "!=" << _newValue;
+    }else if(m_iValue != _newValue){
+        ofLogVerbose() << "Compared: " << m_iValue << "!=" << _newValue;
         // If values are not in same quantity
         return true;
     }
@@ -36,14 +36,14 @@ bool ofxXbeeNodePin::change(pinMode _newMode, float _newValue){
 
 }
 
-void ofxXbeeNodePin::set(pinMode _mode, float _value){
+void ofxXbeeNodePin::set(pinMode _mode, int _value){
     m_eMode     = _mode;
-    m_fValue    = _value;
+    m_iValue    = _value;
 }
 
 void ofxXbeeNodePin::setup(pinMode _mode){
     m_eMode     = _mode;
-    m_fValue    = 0;
+    m_iValue    = 0;
 }
 
 
@@ -51,6 +51,6 @@ pinMode ofxXbeeNodePin::getMode(){
     return m_eMode;
 }
 
-float ofxXbeeNodePin::getValue(){
-    return m_fValue;
+int ofxXbeeNodePin::getValue(){
+    return m_iValue;
 }

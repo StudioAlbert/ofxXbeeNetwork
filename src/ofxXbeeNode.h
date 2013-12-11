@@ -56,7 +56,7 @@ protected:
 public:
     map<int, ofxXbeeNodePin> getPins(){return m_aPins;};
     void registerPin(int _pinNum, pinMode _pinMode);
-    void setPin(int _pinNum, pinMode _pinMode, float _value);
+    void setPin(int _pinNum, pinMode _pinMode, int _value);
     
     // HeartBeat -- We wanna know if this node is already on
 protected:

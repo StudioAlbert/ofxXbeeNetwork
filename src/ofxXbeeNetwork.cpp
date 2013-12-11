@@ -59,7 +59,7 @@ void ofxXbeeNetwork::setNodePin(string _IDNode, int _pinNum, pinMode _pinMode, f
 
 // -----------------------------------------------
 void ofxXbeeNetwork::update(bool _write, bool _read, int _nbMaxMessagesWrite){
-    
+
     if(_write==true && !m_aNodes.empty()){
         serialWrite(_nbMaxMessagesWrite);
     }
@@ -114,9 +114,9 @@ void ofxXbeeNetwork::serialSendMsg(string _msgToSend){
         ofLogVerbose() << "Sending : " << _msgToSend;
         
         // Logging
-        m_aSerialMessages.push(ofGetTimestampString() + " : " +_msgToSend);
+        m_aSerialMessages.push_front(ofGetTimestampString() + " : " +_msgToSend);
         if (m_aSerialMessages.size()>MaxMessagesTrace) {
-            m_aSerialMessages.pop();
+            m_aSerialMessages.pop_back();
         }
         
         // Status
@@ -148,8 +148,9 @@ void ofxXbeeNetwork::serialRead(){
             while(m_oSerial.available()){
                 
                 m_sCurrentMsg += m_oSerial.readByte();
-                //ofLogVerbose() << "Received : " << m_sCurrentMsg;
+                m_sRoughMsg   += m_sCurrentMsg;
                 
+                //ofLogVerbose() << "Received : " << m_sCurrentMsg;
                 if (m_sCurrentMsg.size()>=1 && m_sCurrentMsg[0] != '[') {
                     m_sCurrentMsg = "";
                 }
@@ -167,7 +168,8 @@ void ofxXbeeNetwork::serialRead(){
                 // On parse les messages ------
                 if (ofxXbeeDummyProtocol::isComplete(m_sCurrentMsg)) {
                     receivedMsg.push_back(m_sCurrentMsg);
-                    m_sCurrentMsg = "";
+                    m_sCurrentMsg   = "";
+                    m_sRoughMsg     = "";
                 }
                 
             };
@@ -225,6 +227,10 @@ string ofxXbeeNetwork::getSerialFullState(){
     fullState.append("Current reading :\n");
     fullState.append(m_sCurrentMsg + "\n");
     
+    fullState.append("\n");
+    fullState.append("Rough reading :\n");
+    fullState.append(m_sRoughMsg + "\n");
+    
     fullState.append("Nb Message read :\n");
     fullState.append(ofToString(m_iTimesRead) + "\n");
     
@@ -234,11 +240,17 @@ string ofxXbeeNetwork::getSerialFullState(){
     fullState.append("\n");
     fullState.append("Messages written :\n");
     
+    list<string>::iterator     oneMessage;
+    for(oneMessage = m_aSerialMessages.begin(); oneMessage != m_aSerialMessages.end(); oneMessage++){
+        fullState.append((*oneMessage) + "\n");
+    }
+    
+    /*
     while (!m_aSerialMessages.empty()) {
         fullState.append(m_aSerialMessages.top() + "\n");
         m_aSerialMessages.pop();
     }
-    
+    */
     
     return fullState;
     
@@ -266,7 +278,7 @@ void ofxXbeeNetwork::setNodeDrop(string _IDNode, int _pin, float _position){
     // First we check if the id was noticed first
     map<string, ofxXbeeNode>::iterator nodeFound;
     
-    ofLogVerbose() << "Animation value : " << _position;
+    //ofLogVerbose() << "Animation value : " << _position;
     
     nodeFound = m_aNodes.find(_IDNode);
     if(nodeFound != m_aNodes.end()){
@@ -327,21 +339,21 @@ void ofxXbeeNetwork::drawNodes(){
 
 // --------------------------------------------------------
 void ofxXbeeNetwork::sendNodePwm(string _IDNode, int _pin, float _value){
-    sendNodePin(_IDNode, _pin, pinModePwm, _value);
+    sendNodePin(_IDNode, _pin, pinModePwm, ofxXbeeDummyProtocol::getValueClamped(_value));
 }
 
 // --------------------------------------------------------
 void ofxXbeeNetwork::sendNodeDrop(string _IDNode, int _pin, float _position){
-    sendNodePin(_IDNode, _pin, pinModeDrop, _position);
+    sendNodePin(_IDNode, _pin, pinModeDrop, ofxXbeeDummyProtocol::getValueClamped(_position));
 }
 
 // --------------------------------------------------------
-void ofxXbeeNetwork::sendNodePin(string _IDNode, int _pin, pinMode _mode, float _value){
+void ofxXbeeNetwork::sendNodePin(string _IDNode, int _pin, pinMode _mode, int _value){
     
     map<string, ofxXbeeNode>::iterator  oneNode;
     map<int, ofxXbeeNodePin>::iterator  onePin;
     
-    _value = ofClamp(_value, 0, 1);
+    //_value = ofClamp(_value, 0, 1);
     
     oneNode = m_aNodes.find(_IDNode);
     if (oneNode != m_aNodes.end()) {
@@ -352,9 +364,9 @@ void ofxXbeeNetwork::sendNodePin(string _IDNode, int _pin, pinMode _mode, float 
             float value = m_aNodes[_IDNode].getPins()[_pin].getValue();
             float mode = m_aNodes[_IDNode].getPins()[_pin].getMode();
             
-            if(_mode!=mode || _value!=value){
+            if(_mode!=mode || (_mode==mode && _value!=value)){
                 
-                ofLogVerbose() << "This pin will change : " << _IDNode << ":" << _pin << " : " << value << "!=" << _value;
+                ofLogVerbose() << "This pin will change : " << _IDNode << ":" << _pin << " : " << value << "!=" << _value << " : " << mode << "!=" << _mode;
                 
                 if (_mode == pinModeDrop) {
                     // Send Message to drop
